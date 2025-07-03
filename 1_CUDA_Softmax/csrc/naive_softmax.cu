@@ -35,7 +35,7 @@ __global__ void naive_softmax_kernel(float* x, float* y, int batch_size, int hid
 }
 
 
-// CUDA function to call the naive softmax kernel
+// C++ function to call the naive softmax kernel
 torch::Tensor naive_softmax(torch::Tensor X) {
     cudaSetDevice(X.get_device());
 

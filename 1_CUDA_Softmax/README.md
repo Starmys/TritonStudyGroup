@@ -41,7 +41,7 @@ $$4096 <= M < 16384, N = 4096$$
 ## Quick Start
 
 - Requirements
-    - 1 NVIDIA GPU card
+    - 1 NVIDIA GPU
     - CUDA >= 11.8
     - torch >= 2.0
 

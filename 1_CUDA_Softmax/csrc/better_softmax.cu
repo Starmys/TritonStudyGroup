@@ -80,7 +80,7 @@ __global__ void better_softmax_kernel(float* x, float* y, int batch_size) {
 }
 
 
-// CUDA function to call the better softmax kernel
+// C++ function to call the better softmax kernel
 torch::Tensor better_softmax(torch::Tensor X) {
     cudaSetDevice(X.get_device());
 
