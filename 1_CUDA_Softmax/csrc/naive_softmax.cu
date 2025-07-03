@@ -6,35 +6,29 @@
 #include <cuda.h>
 
 
-__global__ void naive_softmax_kernel(
-    float* x,
-    float* y,
-    int M,
-    int N
-) {
+__global__ void naive_softmax_kernel(float* x, float* y, int batch_size, int hidden_dim) {
     int row_idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (row_idx >= M) return;
+    if (row_idx >= batch_size) return;
 
     float max_val = -FLT_MAX;
-    for (int i = 0; i < N; i++) {
-        float tmp_val = x[row_idx * N + i];
-        max_val = tmp_val > max_val ? tmp_val : max_val;
+    for (int i = 0; i < hidden_dim; i++) {
+        max_val = max(max_val, x[row_idx * hidden_dim + i]);
     }
 
     float sum_exp = 0.0f;
-    for (int i = 0; i < N; i++) {
-        float tmp_val = x[row_idx * N + i];
+    for (int i = 0; i < hidden_dim; i++) {
+        float tmp_val = x[row_idx * hidden_dim + i];
         sum_exp += expf(tmp_val - max_val);
     }
 
-    for (int i = 0; i < N; i++) {
-        float tmp_val = x[row_idx * N + i];
-        y[row_idx * N + i] = expf(tmp_val - max_val) / sum_exp;
+    for (int i = 0; i < hidden_dim; i++) {
+        float tmp_val = x[row_idx * hidden_dim + i];
+        y[row_idx * hidden_dim + i] = expf(tmp_val - max_val) / sum_exp;
     }
 }
 
 
-at::Tensor naive_softmax(torch::Tensor X) {
+torch::Tensor naive_softmax(torch::Tensor X) {
     cudaSetDevice(X.get_device());
 
     int batch_size = X.size(0);

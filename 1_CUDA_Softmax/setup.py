@@ -13,6 +13,7 @@ if torch.cuda.is_available():
         sources=[
             os.path.join('csrc', 'my_softmax.cpp'),
             os.path.join('csrc', 'naive_softmax.cu'),
+            os.path.join('csrc', 'better_softmax.cu'),
         ],
         extra_compile_args=['-std=c++17', '-O3'],
     )

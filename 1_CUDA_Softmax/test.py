@@ -1,6 +1,6 @@
 import torch
 
-from my_softmax import naive_softmax
+from my_softmax import naive_softmax, better_softmax
 
 
 def profile(func, inputs, num_warmups=50, num_iters=50):
@@ -28,16 +28,20 @@ def test_softmax(batch_size: int, hidden_dim: int):
 
     y_torch = torch_softmax(x)
     y_naive = naive_softmax(x)
+    y_better = better_softmax(x)
 
     torch.testing.assert_close(y_naive, y_torch)
+    torch.testing.assert_close(y_naive, y_better)
 
     latency_torch = profile(torch_softmax, (x, ))
     latency_naive = profile(naive_softmax, (x, ))
+    latency_better = profile(better_softmax, (x, ))
 
     print(f'Batch size: {batch_size}, Hidden dim: {hidden_dim}')
     print(f'Torch Softmax Latency: {latency_torch:.2f} ms')
     print(f'Naive Softmax Latency: {latency_naive:.2f} ms')
+    print(f'Better Softmax Latency: {latency_better:.2f} ms')
 
 
 if __name__ == '__main__':
-    test_softmax(batch_size=4567, hidden_dim=4096)
+    test_softmax(batch_size=8765, hidden_dim=4096)
