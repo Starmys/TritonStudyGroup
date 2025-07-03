@@ -1,9 +1,8 @@
 # Write a Simple CUDA Kernel: Softmax
 
-## Problem Defination
+## Problem Definition
 
-- Shape: $M$ is batch size, $N$ is hidden dimension
-$$4096 <= M < 16384, N = 4096$$
+- Shape: batch size $4096 \le M < 16384$, hidden dimension $N = 4096$
 
 - Mathematical
 
@@ -17,7 +16,7 @@ $$4096 <= M < 16384, N = 4096$$
 
   $$X \in \mathbb{R}^{M \times N}_{\mathrm{float32}}$$
 
-  $$M_i \gets \max_{j=0}^{N} X_{ij}$$
+  $$M_i \gets \max_{j=1}^{N} X_{ij}$$
 
   $$Z_{ij} \gets \exp(X_{ij}-M_i)$$
 

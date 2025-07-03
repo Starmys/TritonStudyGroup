@@ -11,7 +11,7 @@
 #define MEM_ACCESS_WIDTH 4    // Number of floats accessed in a single memory operation (4 floats = 16 bytes = 128 bits)
 
 
-template<int VALS_PER_THREAD>  // Template for the number of values processed per thread
+template<int VALS_PER_THREAD>  // Each thread (lane) processes VALS_PER_THREAD values
 __global__ void better_softmax_kernel(float* x, float* y, int batch_size) {
     // Current warp index in the thread block
     const int warp_idx = threadIdx.x / WARP_SIZE;
@@ -25,8 +25,8 @@ __global__ void better_softmax_kernel(float* x, float* y, int batch_size) {
     // Boundary check
     if (row_idx >= batch_size) return;
 
-    // Each thread (lane) processes VALS_PER_THREAD values
-    const int offset = (row_idx * WARP_SIZE + lane_idx) * VALS_PER_THREAD;
+    // Offset for contiguous memory access in a warp
+    const int offset = row_idx * (WARP_SIZE * VALS_PER_THREAD) + lane_idx * MEM_ACCESS_WIDTH;
 
     // Allocate VALS_PER_THREAD floats in registers
     float tmp_val[VALS_PER_THREAD];
@@ -36,7 +36,7 @@ __global__ void better_softmax_kernel(float* x, float* y, int batch_size) {
     for (int i = 0; i < VALS_PER_THREAD; i += MEM_ACCESS_WIDTH) {
         // Vectorized memory access using float4
         reinterpret_cast<float4*>(&tmp_val[i])[0] =
-            reinterpret_cast<float4*>(&x[offset + i])[0];
+            reinterpret_cast<float4*>(&x[offset + i * WARP_SIZE])[0];
     }
 
     // Find the maximum value in the thread's values
@@ -74,7 +74,7 @@ __global__ void better_softmax_kernel(float* x, float* y, int batch_size) {
     #pragma unroll
     for (int i = 0; i < VALS_PER_THREAD; i += MEM_ACCESS_WIDTH) {
         // Vectorized memory access using float4
-        reinterpret_cast<float4*>(&y[offset + i])[0] =
+        reinterpret_cast<float4*>(&y[offset + i * WARP_SIZE])[0] =
             reinterpret_cast<float4*>(&tmp_val[i])[0];
     }
 }
