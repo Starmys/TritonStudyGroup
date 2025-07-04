@@ -1,4 +1,4 @@
-import os
+import glob
 from setuptools import setup, find_packages
 
 import torch
@@ -10,11 +10,7 @@ if torch.cuda.is_available():
     from torch.utils.cpp_extension import CUDAExtension
     seqlen_dynamic_attention_ext = CUDAExtension(
         name='my_softmax.cuda',
-        sources=[
-            os.path.join('csrc', 'my_softmax.cpp'),
-            os.path.join('csrc', 'naive_softmax.cu'),
-            os.path.join('csrc', 'better_softmax.cu'),
-        ],
+        sources=glob.glob('csrc/*'),
         extra_compile_args=['-std=c++17', '-O3'],
     )
     ext_modules.append(seqlen_dynamic_attention_ext)

@@ -2,7 +2,7 @@
 
 ## Problem Definition
 
-- Shape: batch size $4096 \le M < 16384$, hidden dimension $N = 4096$
+- Shape: batch size $M \ge 4096$, hidden dimension $N = 4096$
 
 - Mathematical
 
@@ -55,3 +55,21 @@
     ```bash
     python test.py
     ```
+
+## Homework
+
+- Calculate the theoretical minimum latency for input size [8765, 4096] on single A100 GPU
+  
+  Hint: check [NVIDIA A100 Specifications](https://www.nvidia.com/en-us/data-center/a100/) for global memory bandwidth
+
+- Can we load the entire row into L1 cache or shared memory in naïve softmax?
+
+  Hint: check [NVIDIA Ampere Whitepaper](https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf) for L1 cache size
+
+- How much acceleration does warp-level contiguous global memory access bring? Why?
+
+  Hint: modify `better_softmax_kernel()` and profile the latancy with non-contiguous memory access
+
+- How does the best softmax implementation changes for inputs of different shapes?
+
+  Hint: try different input shapes in `test.py` first
