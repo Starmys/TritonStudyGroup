@@ -49,7 +49,7 @@ def triton_softmax(x: torch.Tensor) -> torch.Tensor:
     num_warps = 4
 
     # Each program (thread block) processes 4 rows
-    BLOCK_SIZE_M = 1
+    BLOCK_SIZE_M = 4
     BLOCK_SIZE_N = hidden_dim
     assert hidden_dim & (hidden_dim - 1) == 0, "Hidden dimension must be a power of 2"
 
