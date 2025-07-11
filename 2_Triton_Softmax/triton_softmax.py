@@ -45,13 +45,20 @@ def triton_softmax(x: torch.Tensor) -> torch.Tensor:
     batch_size, hidden_dim = x.shape
     y = torch.empty_like(x)
 
-    # Each program (thread block) processes one row
+    # Program (thread block) size = 4 warps = 128 threads
+    num_warps = 4
+
+    # Each program (thread block) processes 4 rows
     BLOCK_SIZE_M = 1
     BLOCK_SIZE_N = hidden_dim
     assert hidden_dim & (hidden_dim - 1) == 0, "Hidden dimension must be a power of 2"
 
     # Launch the Triton kernel
     grid = (triton.cdiv(batch_size, BLOCK_SIZE_M), )
-    softmax_kernel[grid](x, y, batch_size, hidden_dim, BLOCK_SIZE_M=BLOCK_SIZE_M, BLOCK_SIZE_N=BLOCK_SIZE_N)
+    softmax_kernel[grid](
+        x, y, batch_size, hidden_dim,
+        BLOCK_SIZE_M=BLOCK_SIZE_M, BLOCK_SIZE_N=BLOCK_SIZE_N,
+        num_warps=num_warps,
+    )
 
     return y
