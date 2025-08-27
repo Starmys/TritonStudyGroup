@@ -9,6 +9,6 @@ Triton crash course prepared for beginners.
 2. Introduction to Triton and Triton softmax kernel
 3. Tensor Core and Triton matrix multiplication
 4. Debugging kernels using NVIDIA NCU
-5. Triton example: flash-attention (fwd & bwd)
-6. Apply sparse load/store technology to Triton kernel
-7. Practical experience: e2e profiling and find opportunities for custom kernels
+5. Flash Attention Algorithm
+6. Triton Flash Attention (fwd & bwd)
+7. Apply sparse load/store technology to Triton kernel
