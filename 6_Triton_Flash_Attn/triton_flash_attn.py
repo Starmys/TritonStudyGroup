@@ -69,7 +69,7 @@ def flash_attn_fwd_kernel(
 ):
     start_m = tl.program_id(0) * BLOCK_SIZE_M
     off_h = tl.program_id(1) % num_heads
-    off_b = tl.program_id(2) // num_heads
+    off_b = tl.program_id(1) // num_heads
 
     # Initialize offsets
     offs_m = start_m + tl.arange(0, BLOCK_SIZE_M)
@@ -202,7 +202,7 @@ def flash_attn_bwd_kernel(
 ):
     start_n = tl.program_id(0) * BLOCK_SIZE_N
     off_h = tl.program_id(1) % num_heads
-    off_b = tl.program_id(2) // num_heads
+    off_b = tl.program_id(1) // num_heads
 
     # Initialize offsets
     offs_m = tl.arange(0, BLOCK_SIZE_M)
@@ -331,7 +331,7 @@ def flash_attn_bwd_dq_kernel(
 ):
     start_m = tl.program_id(0) * BLOCK_SIZE_M
     off_h = tl.program_id(1) % num_heads
-    off_b = tl.program_id(2) // num_heads
+    off_b = tl.program_id(1) // num_heads
 
     # Initialize offsets
     offs_m = start_m + tl.arange(0, BLOCK_SIZE_M)
