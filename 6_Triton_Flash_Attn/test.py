@@ -76,11 +76,16 @@ def test_attn(B: int, N: int, H: int, D: int, causal: bool):
         'triton_split_bwd': profile_attn_fwd_bwd(triton_flash_attn_split_bwd_func),
         'flash_official': profile_attn_fwd_bwd(flash_attn_func),
         'torch_naive': profile_attn_fwd_bwd(torch_naive_attn),
-    }))
+    }).T)
 
 
 if __name__ == '__main__':
+    print('='* 64)
     test_attn(B=1, H=32, N=4096, D=128, causal=False)
+    print('-'* 64)
     test_attn(B=1, H=32, N=4096, D=128, causal=True)
+    print('-'* 64)
     test_attn(B=1, H=32, N=4321, D=128, causal=False)
+    print('-'* 64)
     test_attn(B=1, H=32, N=4321, D=128, causal=True)
+    print('='* 64)

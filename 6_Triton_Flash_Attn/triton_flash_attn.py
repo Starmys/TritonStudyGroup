@@ -163,14 +163,14 @@ def _attn_bwd_loop(
 
         if not SKIP_DQ:
             # Update dQ <- dQ + dS @ K by atomic_add
-            dqT = tl.dot(k.T, dsT) * 0.6931471824645996
+            dqT = tl.dot(k.T, dsT.to(k.type.element_ty)) * 0.6931471824645996
             if MASK_M:
                 tl.atomic_add(dq_ptrs + start_m * stride_om, dqT, mask=mask_m[None, :], sem='relaxed')
             else:
                 tl.atomic_add(dq_ptrs + start_m * stride_om, dqT, sem='relaxed')
 
         # Update dK <- dK + dS^T @ Q
-        dk += tl.dot(dsT, q)
+        dk += tl.dot(dsT.to(q.type.element_ty), q)
 
     return dk, dv
 
@@ -300,7 +300,7 @@ def _attn_bwd_dq_loop(
             ds = tl.where(mask_n[None, :], ds, 0.0)
 
         # Update dQ <- dQ + dS @ K
-        dq += tl.dot(ds, k)
+        dq += tl.dot(ds.to(k.type.element_ty), k)
 
     return dq
 
